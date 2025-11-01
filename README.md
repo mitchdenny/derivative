@@ -1,13 +1,39 @@
-# Getting started with .NET Aspire w/ Devcontainers
+# Derivative
 
-This is a repository template to streamline the process of getting started with .NET Aspire using Devontainers in both Visual Studio Code and GitHub Codespaces. Please refer to our product documentation on how to use these repository templates to get started.
+**Derivative** is an experimental generative art project that explores the intersection of algorithmic art and generative AI. The project's name is a deliberate commentary on the criticism that generative AI "derives" from the work of artists—here, that's precisely the point and the art itself.
 
-- [.NET Aspire and GitHub Codespaces](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/github-codespaces)
-- [.NET Aspire and Visual Studio Code Dev Containers](https://https://learn.microsoft.com/en-us/dotnet/aspire/get-started/dev-containers)
+## Concept
 
-> NOTE: Once you have created your repository from this template please remember to review the included files such as `LICENSE`, `CODE_OF_CONDUCT.md`, `SECURITY.md` and this `README.md` file to ensure they are appropriate for your circumstances.
+The project visualizes the evolution of generative art through AI-assisted iteration. Each artwork is created by an AI agent that takes a previous p5.js sketch as input, along with user-provided keywords, and generates a new variation. The result is an ever-growing tree of derivative works, where each piece builds upon its predecessors.
 
-> NOTE: This repository is configured to use the latest daily builds of .NET Aspire. Use the https://github.com/dotnet/aspire-devcontainer repository as a template for the latest _released_ bits. If you are a member of the .NET Aspire team you can create a codespace directly from this repository to speed up the spin-up time for a Devcontainer for testing purposes. The `devcontainer.json` includes additional features which are more common for internal team testing scenarios.
+### Visual Components
+
+- **Force-Directed Graph**: A live, interactive visualization (built with d3.js) showing the genealogy of artworks. Each node represents a unique piece, with edges showing the parent-child relationships between derivatives.
+- **Art Viewer**: Displays the selected artwork alongside the p5.js code and input parameters that generated it. Users can create new derivatives by adding 3-5 keywords to guide the AI, but cannot directly modify the code.
+
+## Architecture
+
+The project leverages .NET Aspire to orchestrate multiple services:
+
+- **Frontend** *(not yet implemented)*: Client-side JavaScript application using d3.js for graph visualization and p5.js for art rendering
+- **Rendering Service** *(not yet implemented)*: Python-based containerized service using Playwright and headless Chrome to execute and capture p5.js sketches
+- **AI Agent Service** *(not yet implemented)*: Microsoft Agent Framework implementation with multiple agents:
+  - Code generation agent (creates new p5.js variations)
+  - Code analysis agent (validates safety and correctness)
+- **API/Backend** *(not yet implemented)*: Handles websocket connections, queuing, and rate limiting
+- **Storage** *(not yet implemented)*: Persists generated images and metadata
+
+## Getting Started
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on setting up your development environment and working with this Aspire-based project.
+
+## Technology Stack
+
+- .NET Aspire (daily builds)
+- JavaScript (d3.js, p5.js)
+- Python (Playwright)
+- Microsoft Agent Framework
+- WebSockets for real-time updates
 
 # Code of Conduct
 
