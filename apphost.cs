@@ -13,7 +13,12 @@ var client = builder.AddViteApp("client", "./src/client");
 
 var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
-    .PublishWithContainerFiles(client, "./wwwroot");
+    .PublishWithContainerFiles(client, "./wwwroot")
+    .PublishAsAzureContainerApp((infra, app) =>
+    {
+        app.Template.Scale.MinReplicas = 0;
+        app.Template.Scale.MaxReplicas = 1;
+    });
 
 client.WithReference(backend);
 
