@@ -106,6 +106,26 @@ for RG_NAME in $RESOURCE_GROUPS; do
             # Delete the resource group
             if az group delete --name "$RG_NAME" --yes --no-wait; then
                 echo "  ✓ Deletion initiated (running asynchronously)"
+                
+                # Post comment to PR about deletion
+                CURRENT_TIME=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+                COMMENT_BODY="## 🗑️ Environment Cleanup
+
+The PR environment \`${RG_NAME}\` has been automatically deleted due to inactivity (PR was inactive for more than ${INACTIVITY_THRESHOLD_HOURS} hour(s)).
+
+This operation runs asynchronously and may take a few minutes to complete.
+
+---
+*Cleanup initiated at ${CURRENT_TIME}*"
+                
+                # Use GitHub API to post comment
+                curl -s -X POST \
+                    -H "Authorization: token $GITHUB_TOKEN" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/$GITHUB_REPO/issues/$PR_NUMBER/comments" \
+                    -d "{\"body\": $(echo "$COMMENT_BODY" | jq -Rs .)}" > /dev/null
+                
+                echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER"
             else
                 echo "  ✗ Failed to delete resource group: $RG_NAME"
             fi
