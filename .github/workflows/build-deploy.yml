@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -54,6 +55,98 @@ jobs:
           AZURE__RESOURCEGROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
         run: |
           aspire deploy
+
+      - name: Get Azure resource details
+        id: azure-resources
+        env:
+          RESOURCE_GROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
+          SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          # Get the container app environment name (assume there's only one)
+          CAE_NAME=$(az containerapp env list \
+            --resource-group "$RESOURCE_GROUP" \
+            --subscription "$SUBSCRIPTION_ID" \
+            --query "[0].name" -o tsv)
+
+          if [ -z "$CAE_NAME" ]; then
+            echo "Warning: No container app environment found in resource group"
+            echo "cae-name=Not available" >> $GITHUB_OUTPUT
+          else
+            echo "cae-name=$CAE_NAME" >> $GITHUB_OUTPUT
+          fi
+
+          # Get the frontend container app URL
+          FRONTEND_URL=$(az containerapp list \
+            --resource-group "$RESOURCE_GROUP" \
+            --subscription "$SUBSCRIPTION_ID" \
+            --query "[?contains(name, 'frontend')].properties.configuration.ingress.fqdn" -o tsv)
+
+          if [ -n "$FRONTEND_URL" ]; then
+            echo "frontend-url=https://$FRONTEND_URL" >> $GITHUB_OUTPUT
+          else
+            echo "frontend-url=Not available" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post deployment info to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESOURCE_GROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
+          SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          CAE_NAME: ${{ steps.azure-resources.outputs.cae-name }}
+          FRONTEND_URL: ${{ steps.azure-resources.outputs.frontend-url }}
+        run: |
+          # Generate Azure Portal URLs
+          RG_URL="https://portal.azure.com/#@/resource/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/overview"
+
+          # Create comment body
+          cat > /tmp/pr_comment.md << 'EOF'
+          ## 🚀 Deployment Successful
+
+          Your PR environment has been deployed to Azure!
+
+          ### Resources
+          - 📦 [Resource Group: `RESOURCE_GROUP_PLACEHOLDER`](RG_URL_PLACEHOLDER)
+          EOF
+
+          # Strip leading spaces (10 spaces of indentation)
+          sed -i 's/^          //' /tmp/pr_comment.md
+
+          # Add CAE link only if available
+          if [ "$CAE_NAME" != "Not available" ]; then
+            CAE_URL="https://portal.azure.com/#@/resource/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.App/managedEnvironments/${CAE_NAME}/overview"
+            echo "- 🏗️ [Container App Environment: \`${CAE_NAME}\`](${CAE_URL})" >> /tmp/pr_comment.md
+          else
+            echo "- 🏗️ Container App Environment: ${CAE_NAME}" >> /tmp/pr_comment.md
+          fi
+
+          # Add frontend URL (conditionally format as link)
+          if [ "$FRONTEND_URL" != "Not available" ]; then
+            echo "- 🌐 [Frontend URL](${FRONTEND_URL})" >> /tmp/pr_comment.md
+          else
+            echo "- 🌐 Frontend URL: ${FRONTEND_URL}" >> /tmp/pr_comment.md
+          fi
+
+          # Add footer
+          cat >> /tmp/pr_comment.md << 'EOF'
+
+          ---
+          *Deployment completed at TIMESTAMP_PLACEHOLDER*
+          EOF
+
+          # Strip leading spaces from footer
+          tail -n 3 /tmp/pr_comment.md | sed 's/^          //' > /tmp/pr_comment_footer.md
+          head -n -3 /tmp/pr_comment.md > /tmp/pr_comment_body.md
+          cat /tmp/pr_comment_body.md /tmp/pr_comment_footer.md > /tmp/pr_comment.md
+
+          # Replace placeholders
+          sed -i "s|RESOURCE_GROUP_PLACEHOLDER|${RESOURCE_GROUP}|g" /tmp/pr_comment.md
+          sed -i "s|RG_URL_PLACEHOLDER|${RG_URL}|g" /tmp/pr_comment.md
+          sed -i "s|TIMESTAMP_PLACEHOLDER|$(date -u '+%Y-%m-%d %H:%M:%S UTC')|g" /tmp/pr_comment.md
+
+          # Post comment to PR
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body-file /tmp/pr_comment.md \
+            --repo ${{ github.repository }}
 
   deploy-production:
     runs-on: ubuntu-latest

@@ -106,6 +106,45 @@ for RG_NAME in $RESOURCE_GROUPS; do
             # Delete the resource group
             if az group delete --name "$RG_NAME" --yes --no-wait; then
                 echo "  ✓ Deletion initiated (running asynchronously)"
+                
+                # Post comment to PR about deletion
+                cat > /tmp/pr_cleanup_comment.md << 'EOF'
+## 🗑️ Environment Cleanup
+
+The PR environment `RG_NAME_PLACEHOLDER` has been automatically deleted due to inactivity (PR was inactive for more than THRESHOLD_PLACEHOLDER hour(s)).
+
+This operation runs asynchronously and may take a few minutes to complete.
+
+---
+*Cleanup initiated at TIMESTAMP_PLACEHOLDER*
+EOF
+
+                sed -i "s|RG_NAME_PLACEHOLDER|${RG_NAME}|g" /tmp/pr_cleanup_comment.md
+                sed -i "s|THRESHOLD_PLACEHOLDER|${INACTIVITY_THRESHOLD_HOURS}|g" /tmp/pr_cleanup_comment.md
+                sed -i "s|TIMESTAMP_PLACEHOLDER|$(date -u '+%Y-%m-%d %H:%M:%S UTC')|g" /tmp/pr_cleanup_comment.md
+                
+                # Use GitHub CLI to post comment
+                if command -v gh &> /dev/null; then
+                    gh pr comment "$PR_NUMBER" \
+                        --body-file /tmp/pr_cleanup_comment.md \
+                        --repo "$GITHUB_REPO"
+                    echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER"
+                else
+                    # Fallback to curl if gh CLI is not available
+                    RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+                        -H "Authorization: token $GITHUB_TOKEN" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "https://api.github.com/repos/$GITHUB_REPO/issues/$PR_NUMBER/comments" \
+                        -d "{\"body\": $(cat /tmp/pr_cleanup_comment.md | jq -Rs .)}")
+                    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+                    if [ "$HTTP_CODE" -eq 201 ]; then
+                        echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER (using curl fallback)"
+                    else
+                        echo "  ⚠ Warning: Failed to post comment (HTTP $HTTP_CODE)"
+                    fi
+                fi
+                
+                rm -f /tmp/pr_cleanup_comment.md
             else
                 echo "  ✗ Failed to delete resource group: $RG_NAME"
             fi
