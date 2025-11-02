@@ -10,6 +10,12 @@ export default defineConfig({
         target: process.env.BACKEND_HTTPS,
         changeOrigin: true,
         secure: false,
+      },
+      '/ws': {
+        target: process.env.BACKEND_HTTPS?.replace('https', 'wss') || 'ws://localhost:5000',
+        ws: true,
+        changeOrigin: true,
+        secure: false,
       }
     }
   }
