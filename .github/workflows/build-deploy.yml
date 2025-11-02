@@ -116,8 +116,12 @@ jobs:
             echo "- 🏗️ Container App Environment: ${CAE_NAME}" >> /tmp/pr_comment.md
           fi
 
-          # Add frontend URL
-          echo "- 🌐 Frontend URL: ${FRONTEND_URL}" >> /tmp/pr_comment.md
+          # Add frontend URL (conditionally format as link)
+          if [ "$FRONTEND_URL" != "Not available" ]; then
+            echo "- 🌐 [Frontend URL](${FRONTEND_URL})" >> /tmp/pr_comment.md
+          else
+            echo "- 🌐 Frontend URL: ${FRONTEND_URL}" >> /tmp/pr_comment.md
+          fi
 
           # Add footer
           cat >> /tmp/pr_comment.md << 'EOF'

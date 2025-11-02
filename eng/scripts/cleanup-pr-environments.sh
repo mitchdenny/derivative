@@ -131,12 +131,17 @@ EOF
                     echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER"
                 else
                     # Fallback to curl if gh CLI is not available
-                    curl -s -X POST \
+                    RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
                         -H "Authorization: token $GITHUB_TOKEN" \
                         -H "Accept: application/vnd.github.v3+json" \
                         "https://api.github.com/repos/$GITHUB_REPO/issues/$PR_NUMBER/comments" \
-                        -d "{\"body\": $(cat /tmp/pr_cleanup_comment.md | jq -Rs .)}" > /dev/null
-                    echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER (using curl fallback)"
+                        -d "{\"body\": $(cat /tmp/pr_cleanup_comment.md | jq -Rs .)}")
+                    HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+                    if [ "$HTTP_CODE" -eq 201 ]; then
+                        echo "  ✓ Posted cleanup notification to PR #$PR_NUMBER (using curl fallback)"
+                    else
+                        echo "  ⚠ Warning: Failed to post comment (HTTP $HTTP_CODE)"
+                    fi
                 fi
                 
                 rm -f /tmp/pr_cleanup_comment.md
