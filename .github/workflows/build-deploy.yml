@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy-pr:
+  deploy-pullrequest:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     environment: pullrequest
@@ -47,7 +47,7 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Run aspire deploy (PR)
+      - name: Run aspire deploy
         env:
           AZURE__SUBSCRIPTIONID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           AZURE__LOCATION: 'westus3'
@@ -55,7 +55,7 @@ jobs:
         run: |
           aspire deploy
 
-  deploy:
+  deploy-production:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     environment: production
@@ -92,7 +92,7 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Run aspire deploy (CI on main)
+      - name: Run aspire deploy
         env:
           AZURE__SUBSCRIPTIONID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           AZURE__LOCATION: 'westus3'
