@@ -28,7 +28,7 @@ jobs:
           curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
           echo "$HOME/.aspire/bin" >> $GITHUB_PATH
 
-      - name: Verify Aspire CLI installation
+      - name: Show Aspire CLI version
         run: |
           aspire --version
 
