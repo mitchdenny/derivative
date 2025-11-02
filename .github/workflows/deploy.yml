@@ -38,7 +38,19 @@ jobs:
         run: |
           aspire do build
 
+      - name: Azure Login
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       - name: Run aspire deploy (CI on main)
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
         run: |
           aspire deploy
