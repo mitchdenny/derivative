@@ -32,6 +32,12 @@ jobs:
         run: |
           aspire --version
 
-      - name: Run aspire publish
+      - name: Run aspire do build-images (PR)
+        if: github.event_name == 'pull_request'
         run: |
-          aspire publish
+          aspire do build-images
+
+      - name: Run aspire deploy (CI on main)
+        if: github.event_name == 'push'
+        run: |
+          aspire deploy
