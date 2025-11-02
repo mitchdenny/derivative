@@ -11,7 +11,7 @@ builder.AddAzureContainerAppEnvironment("env");
 
 var frontend = builder.AddViteApp("client", "./src/frontend");
 
-var backend = builder.AddProject<Projects.Derivative_Frontend>("backend")
+var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
     .PublishWithContainerFiles(frontend, "./wwwroot");
 
