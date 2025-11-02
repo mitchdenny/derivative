@@ -75,8 +75,6 @@ jobs:
 
       - name: Run aspire deploy (CI on main)
         env:
-          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE__SUBSCRIPTIONID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
         run: |
           aspire deploy
