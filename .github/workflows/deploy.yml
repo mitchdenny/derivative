@@ -12,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || '' }}
 
     steps:
       - name: Checkout code
@@ -32,6 +33,12 @@ jobs:
         run: |
           aspire --version
 
-      - name: Run aspire publish
+      - name: Run aspire do build-images (PR)
+        if: github.event_name == 'pull_request'
         run: |
-          aspire publish
+          aspire do build
+
+      - name: Run aspire deploy (CI on main)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          aspire deploy
