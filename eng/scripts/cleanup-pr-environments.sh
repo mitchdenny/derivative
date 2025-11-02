@@ -54,9 +54,20 @@ for RG_NAME in $RESOURCE_GROUPS; do
         echo "  PR Number: $PR_NUMBER"
         
         # Get PR details from GitHub API
-        PR_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+        HTTP_CODE=$(curl -s -w "%{http_code}" -o "/tmp/pr_data_${PR_NUMBER}.json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/$GITHUB_REPO/pulls/$PR_NUMBER")
+        
+        if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "  GitHub API returned HTTP $HTTP_CODE. Skipping deletion for safety."
+            rm -f "/tmp/pr_data_${PR_NUMBER}.json"
+            echo ""
+            continue
+        fi
+        
+        PR_DATA=$(cat "/tmp/pr_data_${PR_NUMBER}.json")
+        rm -f "/tmp/pr_data_${PR_NUMBER}.json"
         
         # Check if PR exists
         PR_STATE=$(echo "$PR_DATA" | jq -r '.state // "not_found"')
@@ -81,8 +92,8 @@ for RG_NAME in $RESOURCE_GROUPS; do
         # Convert GitHub timestamp to Unix timestamp
         UPDATED_TIMESTAMP=$(date -u -d "$UPDATED_AT" +%s)
         
-        # Calculate time difference in seconds
-        TIME_DIFF=$(($(date +%s) - UPDATED_TIMESTAMP))
+        # Calculate time difference in seconds (using UTC for both)
+        TIME_DIFF=$(($(date -u +%s) - UPDATED_TIMESTAMP))
         TIME_DIFF_HOURS=$((TIME_DIFF / 3600))
         
         echo "  Last updated: $UPDATED_AT (${TIME_DIFF_HOURS} hours ago)"
@@ -93,9 +104,11 @@ for RG_NAME in $RESOURCE_GROUPS; do
             echo "  Deleting resource group: $RG_NAME"
             
             # Delete the resource group
-            az group delete --name "$RG_NAME" --yes --no-wait
-            
-            echo "  ✓ Deletion initiated (running asynchronously)"
+            if az group delete --name "$RG_NAME" --yes --no-wait; then
+                echo "  ✓ Deletion initiated (running asynchronously)"
+            else
+                echo "  ✗ Failed to initiate deletion for resource group: $RG_NAME"
+            fi
         else
             echo "  ✗ PR is still active (updated within last $INACTIVITY_THRESHOLD_HOURS hour(s)). Keeping resource group."
         fi
