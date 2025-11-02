@@ -9,12 +9,12 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddAzureContainerAppEnvironment("env");
 
-var frontend = builder.AddViteApp("client", "./src/client");
+var client = builder.AddViteApp("client", "./src/client");
 
 var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
-    .PublishWithContainerFiles(frontend, "./wwwroot");
+    .PublishWithContainerFiles(client, "./wwwroot");
 
-frontend.WithReference(backend);
+client.WithReference(backend);
 
 builder.Build().Run();
