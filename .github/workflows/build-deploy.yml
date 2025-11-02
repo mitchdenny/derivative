@@ -10,11 +10,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    permissions:
-      contents: read
+  build-and-deploy-pr:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    environment: pullrequest
+    concurrency:
+      group: deploy-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -35,9 +40,20 @@ jobs:
         run: |
           aspire --version
 
-      - name: Run aspire do build-images (PR)
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Run aspire deploy (PR)
+        env:
+          AZURE__SUBSCRIPTIONID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE__LOCATION: 'westus3'
+          AZURE__RESOURCEGROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
         run: |
-          aspire do build
+          aspire deploy
 
   deploy:
     runs-on: ubuntu-latest
