@@ -104,8 +104,11 @@ for RG_NAME in $RESOURCE_GROUPS; do
             echo "  Deleting resource group: $RG_NAME"
             
             # Delete the resource group
-            az group delete --name "$RG_NAME" --yes --no-wait
-            echo "  ✓ Deletion initiated (running asynchronously)"
+            if az group delete --name "$RG_NAME" --yes --no-wait; then
+                echo "  ✓ Deletion initiated (running asynchronously)"
+            else
+                echo "  ✗ Failed to delete resource group: $RG_NAME"
+            fi
         else
             echo "  ✗ PR is still active (updated within last $INACTIVITY_THRESHOLD_HOURS hour(s)). Keeping resource group."
         fi
