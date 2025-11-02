@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
 
@@ -42,6 +44,7 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     environment: production
     permissions:
+      contents: read
       id-token: write
 
     steps:
