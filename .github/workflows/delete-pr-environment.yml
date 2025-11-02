@@ -1,0 +1,35 @@
+name: Delete PR Environment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  delete-environment:
+    # Only run on pull request comments (not regular issues)
+    # and exact match of /delete-environment
+    if: |
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/delete-environment'
+    runs-on: ubuntu-latest
+    environment: pullrequest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Delete PR environment
+        run: |
+          bash eng/scripts/delete-pr-environment.sh \
+            "${{ vars.AZURE_SUBSCRIPTION_ID }}" \
+            "${{ github.event.issue.number }}"
