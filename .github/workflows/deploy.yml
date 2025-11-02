@@ -35,7 +35,7 @@ jobs:
       - name: Run aspire do build-images (PR)
         if: github.event_name == 'pull_request'
         run: |
-          aspire do build-image
+          aspire do build
 
       - name: Run aspire deploy (CI on main)
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
