@@ -10,6 +10,7 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    environment: pullrequest
     permissions:
       contents: read
       id-token: write
