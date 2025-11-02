@@ -100,9 +100,9 @@ export default function ForceDirectedGraph() {
       .force('link', d3.forceLink<Node, Link>(graphData.links)
         .id((d) => d.id)
         .distance(100))
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('charge', d3.forceManyBody().strength(-150))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(30));
+      .force('collision', d3.forceCollide().radius(40));
 
     simulationRef.current = simulation;
 
@@ -113,8 +113,8 @@ export default function ForceDirectedGraph() {
       .data(graphData.links)
       .join('line')
       .attr('stroke', '#999')
-      .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', 2);
+      .attr('stroke-opacity', 1.0)
+      .attr('stroke-width', 3);
 
     // Create nodes
     const node = g.append('g')
@@ -122,7 +122,7 @@ export default function ForceDirectedGraph() {
       .selectAll('circle')
       .data(graphData.nodes)
       .join('circle')
-      .attr('r', 10)
+      .attr('r', 20)
       .attr('fill', '#69b3a2')
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
@@ -156,7 +156,7 @@ export default function ForceDirectedGraph() {
       .join('text')
       .text((d) => d.id)
       .attr('font-size', 12)
-      .attr('dx', 15)
+      .attr('dx', 25)
       .attr('dy', 4);
 
     // Update positions on each tick
