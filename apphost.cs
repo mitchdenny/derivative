@@ -3,18 +3,18 @@
 #:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25551.4
 #:package Aspire.Hosting.Yarp@13.1.0-preview.1.25551.4
 #:package Aspire.Hosting.Docker@13.1.0-preview.1.25551.4
-#:project src\Derivative.Backend\Derivative.Backend.csproj
+#:project src\Derivative.Frontend\Derivative.Frontend.csproj
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddAzureContainerAppEnvironment("env");
 
-var frontend = builder.AddViteApp("frontend", "./src/frontend");
+var client = builder.AddViteApp("client", "./src/client");
 
-var backend = builder.AddProject<Projects.Derivative_Backend>("backend")
+var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
-    .PublishWithContainerFiles(frontend, "./wwwroot");
+    .PublishWithContainerFiles(client, "./wwwroot");
 
-frontend.WithReference(backend);
+client.WithReference(backend);
 
 builder.Build().Run();
