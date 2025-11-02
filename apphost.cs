@@ -9,7 +9,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 builder.AddAzureContainerAppEnvironment("env");
 
-var frontend = builder.AddViteApp("client", "./src/frontend");
+var frontend = builder.AddViteApp("client", "./src/client");
 
 var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
