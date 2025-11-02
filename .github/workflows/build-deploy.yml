@@ -76,5 +76,7 @@ jobs:
       - name: Run aspire deploy (CI on main)
         env:
           AZURE__SUBSCRIPTIONID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          AZURE__LOCATION: 'westus3'
+          AZURE__RESOURCEGROUP: 'derivative-production'
         run: |
           aspire deploy
