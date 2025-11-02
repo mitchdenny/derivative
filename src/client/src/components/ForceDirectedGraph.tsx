@@ -22,10 +22,10 @@ export default function ForceDirectedGraph() {
   const simulationRef = useRef<d3.Simulation<Node, Link> | null>(null);
 
   useEffect(() => {
-    // Get the backend URL from environment variable or use a default
-    const backendUrl = import.meta.env.BACKEND_HTTPS || window.location.origin;
-    const protocol = backendUrl.startsWith('https') ? 'wss' : 'ws';
-    const wsUrl = `${protocol}://${backendUrl.replace(/^https?:\/\//, '')}/ws/graph`;
+    // In development, use the proxy path. In production, use the backend URL from env
+    const wsUrl = import.meta.env.DEV 
+      ? `ws://${window.location.host}/ws/graph`
+      : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws/graph`;
 
     console.log('Connecting to WebSocket:', wsUrl);
     const ws = new WebSocket(wsUrl);
@@ -128,7 +128,7 @@ export default function ForceDirectedGraph() {
       .attr('stroke-width', 2);
 
     // Add drag behavior
-    const drag = d3.drag<SVGCircleElement, Node>()
+    const dragBehavior = d3.drag<SVGCircleElement, Node>()
       .on('start', (event, d) => {
         if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -144,7 +144,9 @@ export default function ForceDirectedGraph() {
         d.fy = null;
       });
 
-    node.call(drag as any);
+    // Type assertion needed due to D3 type complexity
+    type DragSelection = d3.Selection<SVGCircleElement | d3.BaseType, Node, SVGGElement, unknown>;
+    node.call(dragBehavior as (selection: DragSelection) => void);
 
     // Add labels
     const labels = g.append('g')
