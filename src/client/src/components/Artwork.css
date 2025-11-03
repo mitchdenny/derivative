@@ -1,0 +1,16 @@
+.artwork {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 450px;
+  height: 450px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--artwork-bg);
+}
+
+.artwork-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

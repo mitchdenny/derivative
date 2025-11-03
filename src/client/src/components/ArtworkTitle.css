@@ -1,0 +1,7 @@
+.artwork-title {
+  font-size: 4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+  line-height: 1.1;
+}

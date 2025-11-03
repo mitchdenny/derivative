@@ -1,34 +1,35 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import Artwork from './components/Artwork'
+import ArtworkTitle from './components/ArtworkTitle'
+import ArtworkInputs from './components/ArtworkInputs'
+import ActionPanel from './components/ActionPanel'
+import ThemeSelector from './components/ThemeSelector'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+
+  const handleThemeChange = (newTheme: 'light' | 'dark') => {
+    setTheme(newTheme)
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <ThemeSelector theme={theme} onThemeChange={handleThemeChange} />
+      
+      <div className="content">
+        <div className="artwork-section">
+          <Artwork />
+        </div>
+        
+        <div className="info-section">
+          <ArtworkTitle title="Mars Topography" />
+          <ArtworkInputs inputs={['mars', 'topography', 'layers', 'burnt curves']} />
+          <ActionPanel />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 

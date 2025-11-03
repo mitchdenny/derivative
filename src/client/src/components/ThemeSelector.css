@@ -1,0 +1,22 @@
+.theme-selector {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+}
+
+.theme-button {
+  padding: 0.75rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 2px solid var(--button-border);
+  background-color: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover {
+  border-color: var(--button-border-hover);
+  background-color: var(--button-bg-hover);
+}
