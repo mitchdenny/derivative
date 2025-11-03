@@ -1,6 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/Derivative.Frontend/Derivative.Frontend.csproj" />
-    <Project Path="src/Derivative.ServiceDefaults/Derivative.ServiceDefaults.csproj" />
-  </Folder>
-</Solution>
