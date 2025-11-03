@@ -34,11 +34,13 @@ jobs:
 
       - name: Download and install Aspire CLI (daily build)
         run: |
+          set -e
           curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
           echo "$HOME/.aspire/bin" >> $GITHUB_PATH
 
       - name: Show Aspire CLI version
         run: |
+          set -e
           aspire --version
 
       - name: Azure Login
@@ -54,6 +56,7 @@ jobs:
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
         run: |
+          set -e
           aspire deploy
 
       - name: Get Azure resource details
@@ -62,6 +65,7 @@ jobs:
           RESOURCE_GROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
           SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
+          set -e
           # Get the container app environment name (assume there's only one)
           CAE_NAME=$(az containerapp env list \
             --resource-group "$RESOURCE_GROUP" \
@@ -95,6 +99,7 @@ jobs:
           CAE_NAME: ${{ steps.azure-resources.outputs.cae-name }}
           FRONTEND_URL: ${{ steps.azure-resources.outputs.frontend-url }}
         run: |
+          set -e
           # Delete previous deployment comments to avoid noise
           # Get all comments from the PR and filter for deployment comments, then delete them
           gh pr view ${{ github.event.pull_request.number }} \
@@ -188,11 +193,13 @@ jobs:
 
       - name: Download and install Aspire CLI (daily build)
         run: |
+          set -e
           curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
           echo "$HOME/.aspire/bin" >> $GITHUB_PATH
 
       - name: Show Aspire CLI version
         run: |
+          set -e
           aspire --version
 
       - name: Azure Login
@@ -208,6 +215,7 @@ jobs:
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-preview'
         run: |
+          set -e
           aspire deploy
 
   deploy-production:
@@ -234,11 +242,13 @@ jobs:
 
       - name: Download and install Aspire CLI (daily build)
         run: |
+          set -e
           curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
           echo "$HOME/.aspire/bin" >> $GITHUB_PATH
 
       - name: Show Aspire CLI version
         run: |
+          set -e
           aspire --version
 
       - name: Azure Login
@@ -254,4 +264,5 @@ jobs:
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-production'
         run: |
+          set -e
           aspire deploy
