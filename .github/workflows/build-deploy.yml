@@ -95,6 +95,23 @@ jobs:
           CAE_NAME: ${{ steps.azure-resources.outputs.cae-name }}
           FRONTEND_URL: ${{ steps.azure-resources.outputs.frontend-url }}
         run: |
+          # Delete previous deployment comments to avoid noise
+          # Get all comments from the PR and filter for deployment comments, then delete them
+          gh pr view ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }} \
+            --json comments \
+            --jq '.comments[]? | select(.body | startswith("## 🚀 Deployment Successful")) | .id' 2>/dev/null | \
+          while IFS= read -r comment_id; do
+            if [ -n "$comment_id" ]; then
+              echo "Deleting old deployment comment: $comment_id"
+              gh api \
+                --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "/repos/${{ github.repository }}/issues/comments/$comment_id" || true
+            fi
+          done
+
           # Generate Azure Portal URLs
           RG_URL="https://portal.azure.com/#@/resource/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}/overview"
 
