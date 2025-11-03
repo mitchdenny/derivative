@@ -33,8 +33,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Use 0 hour threshold for PR closure events, 1 hour for scheduled/manual runs
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            THRESHOLD="0"
+          else
+            THRESHOLD="1"
+          fi
+          
           bash eng/scripts/cleanup-pr-environments.sh \
             "${{ vars.AZURE_SUBSCRIPTION_ID }}" \
             "${{ github.repository }}" \
             "$GITHUB_TOKEN" \
-            "1"
+            "$THRESHOLD"
