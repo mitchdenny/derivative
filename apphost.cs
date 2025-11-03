@@ -1,9 +1,11 @@
-﻿#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25551.4
-#:package Aspire.Hosting.NodeJs@13.1.0-preview.1.25551.4
-#:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25551.4
-#:package Aspire.Hosting.Yarp@13.1.0-preview.1.25551.4
-#:package Aspire.Hosting.Docker@13.1.0-preview.1.25551.4
+﻿#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25552.3
+#:package Aspire.Hosting.NodeJs@13.1.0-preview.1.25552.3
+#:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25552.3
+#:package Aspire.Hosting.Yarp@13.1.0-preview.1.25552.3
+#:package Aspire.Hosting.Docker@13.1.0-preview.1.25552.3
 #:project src\Derivative.Frontend\Derivative.Frontend.csproj
+
+#pragma warning disable ASPIREACADOMAINS001
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -28,7 +30,7 @@ var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
 
         if (customDomain is not null && certificateName is not null)
         {
-            app.ConfigureDomain(customDomain, certificateName);
+            app.ConfigureCustomDomain(customDomain, certificateName);
         }
     });
 
