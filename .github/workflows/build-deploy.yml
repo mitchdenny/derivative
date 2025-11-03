@@ -54,6 +54,7 @@ jobs:
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-pr-${{ github.event.pull_request.number }}'
         run: |
+          set -e
           aspire deploy
 
       - name: Get Azure resource details
@@ -208,4 +209,5 @@ jobs:
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-production'
         run: |
+          set -e
           aspire deploy
