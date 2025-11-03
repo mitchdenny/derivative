@@ -8,8 +8,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Conditionally adds parameters to app model if config values are specified.
-var customDomain = builder.Configuration["Parameters:customDomain"] != null ? builder.AddParameter("customDomain") : null;
-var certificateName = builder.Configuration["Parameters:certificateName"] != null ? builder.AddParameter("certificateName") : null;
+var customDomainValue = builder.Configuration["Parameters:customDomain"];
+var certificateNameValue = builder.Configuration["Parameters:certificateName"];
+
+var customDomain = !string.IsNullOrEmpty(customDomainValue) ? builder.AddParameter("customDomain") : null;
+var certificateName = !string.IsNullOrEmpty(certificateNameValue) ? builder.AddParameter("certificateName") : null;
 
 builder.AddAzureContainerAppEnvironment("env");
 
@@ -23,7 +26,7 @@ var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
         app.Template.Scale.MinReplicas = 0;
         app.Template.Scale.MaxReplicas = 1;
 
-        if (customDomain is { } && certificateName is { })
+        if (customDomain is not null && certificateName is not null)
         {
             app.ConfigureDomain(customDomain, certificateName);
         }
