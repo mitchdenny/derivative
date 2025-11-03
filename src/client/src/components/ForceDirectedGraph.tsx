@@ -52,11 +52,27 @@ export default function ForceDirectedGraph() {
     const simulation = simulationRef.current;
     const graphData = graphDataRef.current;
     const colors = getColors();
+    
+    const MAX_NODES = 30;
 
     // Add new node and link if provided
     if (newNode && newLink) {
       graphData.nodes.push(newNode);
       graphData.links.push(newLink);
+      
+      // Cull oldest nodes if we exceed MAX_NODES
+      if (graphData.nodes.length > MAX_NODES) {
+        const nodesToRemove = graphData.nodes.length - MAX_NODES;
+        const removedNodes = graphData.nodes.splice(0, nodesToRemove);
+        const removedNodeIds = new Set(removedNodes.map(n => n.id));
+        
+        // Remove links connected to removed nodes
+        graphData.links = graphData.links.filter(link => {
+          const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+          const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+          return !removedNodeIds.has(sourceId) && !removedNodeIds.has(targetId);
+        });
+      }
     }
 
     // Update the simulation with new nodes/links
