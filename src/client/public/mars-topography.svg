@@ -1,0 +1,21 @@
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff8c42;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#c44569;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#8b3a62;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5f3868;stop-opacity:1" />
+    </linearGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" />
+      <feColorMatrix type="saturate" values="0.3"/>
+    </filter>
+  </defs>
+  <rect width="450" height="450" fill="url(#grad1)"/>
+  <rect width="450" height="450" fill="url(#grad1)" filter="url(#noise)" opacity="0.6"/>
+  <path d="M 0 150 Q 112.5 100, 225 150 T 450 150 L 450 200 Q 337.5 250, 225 200 T 0 200 Z" fill="#ff6b35" opacity="0.7"/>
+  <path d="M 0 200 Q 112.5 150, 225 200 T 450 200 L 450 250 Q 337.5 300, 225 250 T 0 250 Z" fill="#c44569" opacity="0.7"/>
+  <path d="M 0 250 Q 112.5 200, 225 250 T 450 250 L 450 300 Q 337.5 350, 225 300 T 0 300 Z" fill="#8b3a62" opacity="0.7"/>
+  <path d="M 0 300 Q 112.5 250, 225 300 T 450 300 L 450 350 Q 337.5 400, 225 350 T 0 350 Z" fill="#5f3868" opacity="0.7"/>
+</svg>

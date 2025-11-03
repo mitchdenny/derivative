@@ -16,9 +16,15 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
 
   return (
     <div className="theme-selector">
-      <button className="theme-button" onClick={handleToggle}>
-        Theme
-      </button>
+      <label className="theme-toggle">
+        <input 
+          type="checkbox" 
+          checked={theme === 'light'} 
+          onChange={handleToggle}
+          aria-label="Toggle theme"
+        />
+        <span className="theme-slider"></span>
+      </label>
     </div>
   );
 };

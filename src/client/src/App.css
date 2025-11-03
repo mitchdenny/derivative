@@ -30,11 +30,13 @@
 @media (max-width: 768px) {
   .app {
     padding: 1rem;
+    padding-top: 4rem;
   }
 
   .content {
     flex-direction: column;
     gap: 2rem;
+    margin-top: 1rem;
   }
   
   .info-section {

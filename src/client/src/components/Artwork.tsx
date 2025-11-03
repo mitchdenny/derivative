@@ -6,7 +6,7 @@ interface ArtworkProps {
 }
 
 const Artwork: React.FC<ArtworkProps> = ({ 
-  imageUrl = 'https://via.placeholder.com/450x450/ff6b35/ffffff?text=Artwork', 
+  imageUrl = '/mars-topography.svg', 
   alt = 'Generated Artwork' 
 }) => {
   return (
