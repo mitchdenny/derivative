@@ -214,6 +214,8 @@ jobs:
           AZURE__SUBSCRIPTIONID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-preview'
+          Parameters__customDomain: ${{ vars.CUSTOM_DOMAIN }}
+          Parameters__certificateName: ${{ vars.CERTIFICATE_NAME }}
         run: |
           set -e
           aspire deploy
@@ -263,6 +265,8 @@ jobs:
           AZURE__SUBSCRIPTIONID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE__LOCATION: 'westus3'
           AZURE__RESOURCEGROUP: 'derivative-production'
+          Parameters__customDomain: ${{ vars.CUSTOM_DOMAIN }}
+          Parameters__certificateName: ${{ vars.CERTIFICATE_NAME }}
         run: |
           set -e
           aspire deploy
