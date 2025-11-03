@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -38,6 +42,11 @@
   background-color: var(--bg-color);
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -48,6 +57,7 @@ body {
 
 #root {
   width: 100%;
+  overflow-x: hidden;
 }
 
 button {
