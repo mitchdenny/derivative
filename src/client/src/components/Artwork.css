@@ -2,8 +2,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 450px;
-  height: 450px;
+  width: min(450px, 90vw);
+  height: min(450px, 90vw);
+  max-width: 450px;
+  max-height: 450px;
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--artwork-bg);
