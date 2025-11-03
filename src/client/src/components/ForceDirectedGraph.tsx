@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
+import ThemeSelector from './ThemeSelector';
 
 interface Node extends d3.SimulationNodeDatum {
   id: string;
@@ -30,6 +31,18 @@ export default function ForceDirectedGraph() {
   const nodeSelectionRef = useRef<d3.Selection<SVGCircleElement, Node, SVGGElement, unknown> | null>(null);
   const labelSelectionRef = useRef<d3.Selection<SVGTextElement, Node, SVGGElement, unknown> | null>(null);
 
+  // Get theme-aware colors
+  const getColors = useCallback(() => {
+    const root = document.documentElement;
+    const style = getComputedStyle(root);
+    return {
+      nodeFill: style.getPropertyValue('--node-fill').trim() || '#69b3a2',
+      nodeStroke: style.getPropertyValue('--node-stroke').trim() || '#ffffff',
+      edgeStroke: style.getPropertyValue('--edge-stroke').trim() || '#999999',
+      bgPrimary: style.getPropertyValue('--bg-primary').trim() || '#ffffff',
+    };
+  }, []);
+
   // Function to update the graph with new data (incremental update)
   const updateGraph = useCallback((newNode?: Node, newLink?: Link) => {
     if (!svgRef.current || !simulationRef.current || !svgGroupRef.current) return;
@@ -38,6 +51,7 @@ export default function ForceDirectedGraph() {
     const g = svgGroupRef.current;
     const simulation = simulationRef.current;
     const graphData = graphDataRef.current;
+    const colors = getColors();
 
     // Add new node and link if provided
     if (newNode && newLink) {
@@ -59,10 +73,10 @@ export default function ForceDirectedGraph() {
 
     link.enter()
       .append('line')
-      .attr('stroke', '#999')
+      .attr('stroke', colors.edgeStroke)
       .attr('stroke-opacity', 1.0)
       .attr('stroke-width', 3)
-      // Set initial coordinates to prevent iOS rendering issues
+      // Set initial coordinates to prevent rendering issues on all browsers
       .attr('x1', (d) => (d.source as Node).x || 0)
       .attr('y1', (d) => (d.source as Node).y || 0)
       .attr('x2', (d) => (d.target as Node).x || 0)
@@ -80,8 +94,8 @@ export default function ForceDirectedGraph() {
     const nodeEnter = node.enter()
       .append('circle')
       .attr('r', 20)
-      .attr('fill', '#69b3a2')
-      .attr('stroke', '#fff')
+      .attr('fill', colors.nodeFill)
+      .attr('stroke', colors.nodeStroke)
       .attr('stroke-width', 2);
 
     // Add drag behavior to new nodes
@@ -192,7 +206,7 @@ export default function ForceDirectedGraph() {
     // Update counts
     setNodeCount(graphData.nodes.length);
     setEdgeCount(graphData.links.length);
-  }, []);
+  }, [getColors]);
 
   // Initialize graph once on mount
   useEffect(() => {
@@ -317,18 +331,24 @@ export default function ForceDirectedGraph() {
   }, [updateGraph]);
 
   return (
-    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '10px', background: '#f0f0f0', borderBottom: '1px solid #ccc' }}>
+    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ 
+        padding: '10px', 
+        background: 'var(--header-bg)', 
+        borderBottom: `1px solid var(--header-border)`,
+        color: 'var(--text-primary)',
+      }}>
         <h2 style={{ margin: 0 }}>Derivative - Generative Art Graph</h2>
-        <p style={{ margin: '5px 0 0 0', fontSize: '14px' }}>
+        <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
           Status: <strong>{status}</strong> | Nodes: <strong>{nodeCount}</strong> | 
           Edges: <strong>{edgeCount}</strong>
         </p>
       </div>
       <svg
         ref={svgRef}
-        style={{ flex: 1, background: '#fff' }}
+        style={{ flex: 1, background: 'var(--bg-primary)', width: '100%', height: '100%' }}
       />
+      <ThemeSelector />
     </div>
   );
 }
