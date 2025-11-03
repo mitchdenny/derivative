@@ -16,8 +16,8 @@ var resourceGroup = builder.Configuration["AZURE__RESOURCEGROUP"];
 var isProduction = resourceGroup == "derivative-production";
 
 // Add parameters for custom domain configuration if in production
-var customDomain = isProduction ? builder.AddParameter("customDomain") : null;
-var certificateName = isProduction ? builder.AddParameter("certificateName") : null;
+var customDomain = isProduction ? builder.AddParameter("custom-domain") : null;
+var certificateName = isProduction ? builder.AddParameter("certificate-name") : null;
 
 var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
@@ -28,9 +28,9 @@ var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
         app.Template.Scale.MaxReplicas = 1;
         
         // Configure custom domain for production deployments
-        if (isProduction && customDomain != null && certificateName != null)
+        if (isProduction)
         {
-            app.ConfigureCustomDomain(customDomain, certificateName);
+            app.ConfigureCustomDomain(customDomain!, certificateName!);
         }
     });
 
