@@ -165,8 +165,54 @@ jobs:
             --body-file /tmp/pr_comment.md \
             --repo ${{ github.repository }}
 
+  deploy-preview:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    environment: preview
+    concurrency:
+      group: deploy-preview
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Download and install Aspire CLI (daily build)
+        run: |
+          curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
+          echo "$HOME/.aspire/bin" >> $GITHUB_PATH
+
+      - name: Show Aspire CLI version
+        run: |
+          aspire --version
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Run aspire deploy
+        env:
+          AZURE__SUBSCRIPTIONID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE__LOCATION: 'westus3'
+          AZURE__RESOURCEGROUP: 'derivative-preview'
+        run: |
+          aspire deploy
+
   deploy-production:
     runs-on: ubuntu-latest
+    needs: deploy-preview
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     environment: production
     concurrency:
