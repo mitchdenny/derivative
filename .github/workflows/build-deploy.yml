@@ -100,7 +100,7 @@ jobs:
           gh pr view ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }} \
             --json comments \
-            --jq '.comments[]? | select(.body | startswith("## 🚀 Deployment Successful")) | .id' 2>/dev/null | \
+            --jq '.comments[]? | select(.body | startswith("## 🚀 Deployment Successful")) | .databaseId' 2>/dev/null | \
           while IFS= read -r comment_id; do
             if [ -n "$comment_id" ]; then
               echo "Deleting old deployment comment: $comment_id"
