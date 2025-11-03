@@ -62,6 +62,11 @@ export default function ForceDirectedGraph() {
       .attr('stroke', '#999')
       .attr('stroke-opacity', 1.0)
       .attr('stroke-width', 3)
+      // Set initial coordinates to prevent iOS rendering issues
+      .attr('x1', (d) => (d.source as Node).x || 0)
+      .attr('y1', (d) => (d.source as Node).y || 0)
+      .attr('x2', (d) => (d.target as Node).x || 0)
+      .attr('y2', (d) => (d.target as Node).y || 0)
       .merge(link);
 
     link.exit().remove();
