@@ -7,12 +7,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/health': {
-        target: process.env.BACKEND_HTTPS || 'http://localhost:5160',
+        target: process.env.FRONTEND_HTTPS,
         changeOrigin: true,
         secure: false,
       },
       '/ws': {
-        target: (process.env.BACKEND_HTTPS || 'http://localhost:5160').replace('https', 'ws').replace('http', 'ws'),
+        target: process.env.FRONTEND_HTTPS?.replace('https', 'ws').replace('http', 'ws'),
         ws: true,
         changeOrigin: true,
         secure: false,
