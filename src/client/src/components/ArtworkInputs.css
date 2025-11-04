@@ -1,0 +1,11 @@
+.artwork-inputs {
+  margin: 1.5rem 0;
+}
+
+.artwork-inputs-text {
+  font-size: 1.25rem;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--text-color);
+  margin: 0;
+  line-height: 1.6;
+}
