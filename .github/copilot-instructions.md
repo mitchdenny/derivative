@@ -114,11 +114,19 @@ derivative/
 3. Configure dependencies and environment variables
 4. Test with `aspire run`
 
-### Testing the full stack
+### Testing and Launching the Application
+
+**IMPORTANT**: Always use `aspire run` to launch and test the application. Do NOT launch individual services directly (e.g., do not run `npm run dev` for the Vite client). The Aspire orchestrator manages all services together.
+
 ```bash
 aspire run
 ```
-This launches all services and the Aspire Dashboard.
+
+This command:
+- Launches all services defined in `apphost.cs`
+- Starts the Aspire Dashboard for monitoring and observability
+- Manages service dependencies and configuration
+- Provides a unified development experience
 
 ### Updating Aspire
 ```bash

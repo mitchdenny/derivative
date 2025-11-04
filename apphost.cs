@@ -18,7 +18,8 @@ var certificateName = !string.IsNullOrEmpty(certificateNameValue) ? builder.AddP
 
 builder.AddAzureContainerAppEnvironment("env");
 
-var client = builder.AddViteApp("client", "./src/client");
+var client = builder.AddViteApp("client", "./src/client")
+    .WithEndpoint("http", endpoint => endpoint.Port = 5159);
 
 var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
