@@ -12,6 +12,13 @@ function App() {
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
+    
+    // Update the theme-color meta tag to match the background color
+    const themeColor = newTheme === 'dark' ? '#1a1a1a' : '#f5f5f5'
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', themeColor)
+    }
   }
 
   return (
