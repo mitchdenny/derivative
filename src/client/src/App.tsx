@@ -10,8 +10,12 @@ const THEME_STORAGE_KEY = 'derivative-theme'
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
-    return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark'
+    try {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY)
+      return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark'
+    } catch {
+      return 'dark'
+    }
   })
 
   useEffect(() => {
@@ -20,8 +24,11 @@ function App() {
 
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme)
-    localStorage.setItem(THEME_STORAGE_KEY, newTheme)
-    document.documentElement.setAttribute('data-theme', newTheme)
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, newTheme)
+    } catch {
+      // localStorage unavailable, theme will still work for current session
+    }
   }
 
   return (
