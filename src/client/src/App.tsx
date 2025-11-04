@@ -22,21 +22,23 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
 
-  // Poll localStorage every 1 minute to sync theme changes from other tabs
+  // Listen for storage events to sync theme changes from other tabs
   useEffect(() => {
-    const pollInterval = setInterval(() => {
-      try {
-        const storedTheme = localStorage.getItem(THEME_STORAGE_KEY)
-        if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark') && storedTheme !== theme) {
-          setTheme(storedTheme)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === THEME_STORAGE_KEY && e.newValue) {
+        const newTheme = e.newValue
+        if (newTheme === 'light' || newTheme === 'dark') {
+          setTheme(currentTheme => {
+            // Only update if the theme actually changed
+            return currentTheme !== newTheme ? newTheme : currentTheme
+          })
         }
-      } catch {
-        // localStorage unavailable, skip polling
       }
-    }, 60000) // Poll every 1 minute (60000ms)
+    }
 
-    return () => clearInterval(pollInterval)
-  }, [theme])
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme)
