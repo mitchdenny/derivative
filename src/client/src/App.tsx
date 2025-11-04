@@ -22,6 +22,22 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
 
+  // Poll localStorage every 1 minute to sync theme changes from other tabs
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      try {
+        const storedTheme = localStorage.getItem(THEME_STORAGE_KEY)
+        if (storedTheme && (storedTheme === 'light' || storedTheme === 'dark') && storedTheme !== theme) {
+          setTheme(storedTheme)
+        }
+      } catch {
+        // localStorage unavailable, skip polling
+      }
+    }, 60000) // Poll every 1 minute (60000ms)
+
+    return () => clearInterval(pollInterval)
+  }, [theme])
+
   const handleThemeChange = (newTheme: 'light' | 'dark') => {
     setTheme(newTheme)
     try {
