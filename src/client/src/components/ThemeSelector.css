@@ -43,11 +43,28 @@
   transition: all 0.3s ease;
 }
 
+.theme-icon {
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  /* Center 16px icon within 22px circle at 4px offset: 4px + (22px - 16px) / 2 = 7px */
+  left: 7px;
+  /* Center 16px icon within 30px container at 3px offset: 3px + (30px - 16px) / 2 = 10px - 3px vertical adjustment = 6px */
+  bottom: 6px;
+  color: var(--bg-color);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
 .theme-toggle input:checked + .theme-slider {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
 .theme-toggle input:checked + .theme-slider:before {
+  transform: translateX(30px);
+}
+
+.theme-toggle input:checked + .theme-slider .theme-icon {
   transform: translateX(30px);
 }
 
