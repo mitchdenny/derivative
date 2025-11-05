@@ -41,6 +41,20 @@
   background-color: var(--text-color);
   border-radius: 50%;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-icon {
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 7px;
+  bottom: 6px;
+  color: var(--bg-color);
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
 .theme-toggle input:checked + .theme-slider {
@@ -48,6 +62,10 @@
 }
 
 .theme-toggle input:checked + .theme-slider:before {
+  transform: translateX(30px);
+}
+
+.theme-toggle input:checked + .theme-slider .theme-icon {
   transform: translateX(30px);
 }
 
