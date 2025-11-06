@@ -1,4 +1,4 @@
-﻿#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25555.7
+#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25555.7
 #:package Aspire.Hosting.JavaScript@13.1.0-preview.1.25555.7
 #:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25555.7
 #:package Aspire.Hosting.Yarp@13.1.0-preview.1.25555.7

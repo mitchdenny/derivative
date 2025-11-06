@@ -1,3 +1,4 @@
+using Derivative.Frontend;
 using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,11 @@ builder.AddServiceDefaults();
 builder.AddAzureCosmosContainer("metadata");
 builder.AddKeyedAzureBlobContainerClient("generatedimages");
 builder.AddKeyedAzureBlobContainerClient("codeblocks");
+
+builder.Services.AddHttpClient<AgentHostClient>(client =>
+{
+    client.BaseAddress = new ("https+http://agenthost");
+});
 
 var app = builder.Build();
 
