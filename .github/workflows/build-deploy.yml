@@ -21,6 +21,7 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
+      models: read
 
     steps:
       - name: Checkout code

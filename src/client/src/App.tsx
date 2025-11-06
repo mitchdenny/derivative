@@ -5,6 +5,7 @@ import ArtworkTitle from './components/ArtworkTitle'
 import ArtworkInputs from './components/ArtworkInputs'
 import ActionPanel from './components/ActionPanel'
 import ThemeSelector from './components/ThemeSelector'
+import { useRandomArtwork, useRemixArtwork } from './api'
 
 const THEME_STORAGE_KEY = 'derivative-theme'
 
@@ -17,6 +18,12 @@ function App() {
       return 'dark'
     }
   })
+
+  // Fetch random artwork data
+  const { data: artwork, loading: artworkLoading, error: artworkError, refetch: getRandomArtwork } = useRandomArtwork()
+  
+  // Handle remixing
+  const { remixArtwork, loading: remixLoading, error: remixError } = useRemixArtwork()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -49,19 +56,60 @@ function App() {
     }
   }
 
+  const handleRandomClick = () => {
+    getRandomArtwork()
+  }
+
+  const handleRemixClick = async () => {
+    if (artwork?.id) {
+      try {
+        await remixArtwork(artwork.id)
+        // After successful remix, we could update the artwork state
+        // For now, let's get a new random artwork to show the remix effect
+        getRandomArtwork()
+      } catch (error) {
+        console.error('Failed to remix artwork:', error)
+      }
+    }
+  }
+
   return (
     <div className="app">
       <ThemeSelector theme={theme} onThemeChange={handleThemeChange} />
       
       <div className="content">
         <div className="artwork-section">
-          <Artwork />
+          <Artwork 
+            imageUrl={artwork?.imageUrl} 
+            alt={artwork?.title}
+            loading={artworkLoading}
+          />
         </div>
         
         <div className="info-section">
-          <ArtworkTitle title="Mars Topography" />
-          <ArtworkInputs inputs={['mars', 'topography', 'layers', 'burnt curves']} />
-          <ActionPanel />
+          <ArtworkTitle title={artwork?.title} />
+          <ArtworkInputs inputs={artwork?.keywords} />
+          <ActionPanel 
+            onRandom={handleRandomClick}
+            onRemix={handleRemixClick}
+            randomLoading={artworkLoading}
+            remixLoading={remixLoading}
+            remixDisabled={!artwork?.id}
+          />
+          
+          {/* Loading and error states */}
+          {artworkLoading && (
+            <div className="status-message">Loading artwork...</div>
+          )}
+          {artworkError && (
+            <div className="status-message error">Error: {artworkError}</div>
+          )}
+          {remixLoading && (
+            <div className="status-message">Creating remix...</div>
+          )}
+          {remixError && (
+            <div className="status-message error">Remix error: {remixError}</div>
+          )}
         </div>
       </div>
     </div>

@@ -4,9 +4,11 @@ interface ArtworkTitleProps {
   title?: string;
 }
 
-const ArtworkTitle: React.FC<ArtworkTitleProps> = ({ title = 'Mars Topography' }) => {
+const ArtworkTitle: React.FC<ArtworkTitleProps> = ({ title }) => {
   return (
-    <h1 className="artwork-title">{title}</h1>
+    <h1 className="artwork-title">
+      {title || 'Loading artwork...'}
+    </h1>
   );
 };
 

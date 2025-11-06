@@ -1,15 +1,18 @@
-﻿#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.JavaScript@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.Yarp@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.Docker@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.Azure.Storage@13.1.0-preview.1.25554.12
-#:package Aspire.Hosting.Azure.CosmosDB@13.1.0-preview.1.25554.12
+﻿#:sdk Aspire.AppHost.Sdk@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.JavaScript@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.Azure.AppContainers@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.Yarp@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.Docker@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.Azure.Storage@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.Azure.CosmosDB@13.1.0-preview.1.25555.7
+#:package Aspire.Hosting.GitHub.Models@13.1.0-preview.1.25555.7
 #:project src\Derivative.Frontend\Derivative.Frontend.csproj
 #:project src\Derivative.AgentHost\Derivative.AgentHost.csproj
 
 #pragma warning disable ASPIREACADOMAINS001
 #pragma warning disable ASPIRECOSMOSDB001
+
+using Aspire.Hosting.GitHub;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -21,6 +24,8 @@ var customDomain = !string.IsNullOrEmpty(customDomainValue) ? builder.AddParamet
 var certificateName = !string.IsNullOrEmpty(certificateNameValue) ? builder.AddParameter("certificateName") : null;
 
 builder.AddAzureContainerAppEnvironment("env");
+
+var model = builder.AddGitHubModel("githubmodels", GitHubModel.OpenAI.OpenAIGpt41);
 
 var metadata = builder.AddAzureCosmosDB("cosmos")
     .RunAsPreviewEmulator(c => c.WithDataExplorer())
@@ -35,6 +40,7 @@ var agentHost = builder.AddProject<Projects.Derivative_AgentHost>("agenthost")
     .WithReference(metadata).WaitFor(metadata)
     .WithReference(generatedImages).WaitFor(generatedImages)
     .WithReference(codeBlocks).WaitFor(codeBlocks)
+    .WithReference(model).WaitFor(model)
     .PublishAsAzureContainerApp((infra, app) =>
     {
         app.Template.Scale.MinReplicas = 0;

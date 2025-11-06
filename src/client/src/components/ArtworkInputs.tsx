@@ -4,12 +4,14 @@ interface ArtworkInputsProps {
   inputs?: string[];
 }
 
-const ArtworkInputs: React.FC<ArtworkInputsProps> = ({ 
-  inputs = ['mars', 'topography', 'layers', 'burnt curves'] 
-}) => {
+const ArtworkInputs: React.FC<ArtworkInputsProps> = ({ inputs }) => {
+  const displayText = inputs && inputs.length > 0 
+    ? inputs.join(', ') 
+    : 'Loading keywords...';
+    
   return (
     <div className="artwork-inputs">
-      <p className="artwork-inputs-text">{inputs.join(', ')}</p>
+      <p className="artwork-inputs-text">{displayText}</p>
     </div>
   );
 };
