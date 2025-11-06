@@ -13,6 +13,9 @@ builder.Services.AddHttpClient<AgentHostClient>(client =>
     client.BaseAddress = new ("https+http://agenthost");
 });
 
+// Register the background service for metadata monitoring
+builder.Services.AddHostedService<ArtworkSeedingService>();
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
