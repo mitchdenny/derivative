@@ -25,6 +25,29 @@ The project leverages .NET Aspire to orchestrate multiple services:
 
 ## Getting Started
 
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (RC2 or later)
+- [Aspire CLI](https://learn.microsoft.com/en-us/dotnet/aspire/fundamentals/setup-tooling)
+- [Node.js](https://nodejs.org/) (for the client application)
+
+### Running the Application
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mitchdenny/derivative.git
+   cd derivative
+   ```
+
+2. Run the application using Aspire:
+   ```bash
+   aspire run
+   ```
+
+3. The Aspire dashboard will start and display URLs for all services. Look for the **client** resource in the dashboard to find the URL for the web application (typically `http://localhost:<port>`).
+
+4. Open the client URL in your browser to access the Derivative application.
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on setting up your development environment and working with this Aspire-based project.
 
 ## Technology Stack
