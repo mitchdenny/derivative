@@ -1,17 +1,26 @@
 import './Artwork.css';
 
 interface ArtworkProps {
-  imageUrl?: string;
-  alt?: string;
+  artworkId?: number;
 }
 
-const Artwork: React.FC<ArtworkProps> = ({ 
-  imageUrl = '/mars-topography.svg', 
-  alt = 'Generated Artwork' 
-}) => {
+const Artwork: React.FC<ArtworkProps> = ({ artworkId }) => {
+  // If no artworkId provided, show a placeholder
+  if (!artworkId) {
+    return (
+      <div className="artwork">
+        <div className="artwork-loading">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="artwork">
-      <img src={imageUrl} alt={alt} className="artwork-image" />
+      <iframe 
+        src={`/api/artwork/${artworkId}/content`} 
+        title="Generated Artwork"
+        className="artwork-iframe"
+      />
     </div>
   );
 };

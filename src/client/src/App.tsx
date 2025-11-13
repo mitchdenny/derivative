@@ -5,6 +5,7 @@ import ArtworkTitle from './components/ArtworkTitle'
 import ArtworkInputs from './components/ArtworkInputs'
 import ActionPanel from './components/ActionPanel'
 import ThemeSelector from './components/ThemeSelector'
+import type { ArtworkMetadata } from './types/artwork'
 
 const THEME_STORAGE_KEY = 'derivative-theme'
 
@@ -17,6 +18,24 @@ function App() {
       return 'dark'
     }
   })
+
+  const [artwork, setArtwork] = useState<ArtworkMetadata | null>(null)
+
+  // Fetch artwork data on mount
+  useEffect(() => {
+    const fetchArtwork = async () => {
+      try {
+        const response = await fetch('/api/artwork/random')
+        if (response.ok) {
+          const data = await response.json()
+          setArtwork(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch artwork:', error)
+      }
+    }
+    fetchArtwork()
+  }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -55,12 +74,12 @@ function App() {
       
       <div className="content">
         <div className="artwork-section">
-          <Artwork />
+          <Artwork artworkId={artwork?.id} />
         </div>
         
         <div className="info-section">
-          <ArtworkTitle title="Mars Topography" />
-          <ArtworkInputs inputs={['mars', 'topography', 'layers', 'burnt curves']} />
+          <ArtworkTitle title={artwork?.title || 'Loading...'} />
+          <ArtworkInputs inputs={artwork?.keywords || []} />
           <ActionPanel />
         </div>
       </div>
