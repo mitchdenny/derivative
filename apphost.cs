@@ -19,7 +19,7 @@ builder.AddAzureContainerAppEnvironment("env");
 var client = builder.AddViteApp("client", "./src/client")
     .WithEndpoint("http", endpoint => endpoint.Port = 5159);
 
-var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
+var frontend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
     .WithExternalHttpEndpoints()
     .PublishWithContainerFiles(client, "./wwwroot")
     .PublishAsAzureContainerApp((infra, app) =>
@@ -33,6 +33,6 @@ var backend = builder.AddProject<Projects.Derivative_Frontend>("frontend")
         }
     });
 
-client.WithReference(backend);
+client.WithReference(frontend);
 
 builder.Build().Run();
